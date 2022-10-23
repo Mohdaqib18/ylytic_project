@@ -3,6 +3,7 @@ import * as d3 from "d3"
 
 const width = 650;
 const height = 400;
+const margin = { top: 20, right: 5, bottom: 20, left: 35 };
 
 
  async function getData() {
@@ -27,58 +28,54 @@ const data = await getData()
 }*/
 const slicedData = data.slice(0,10);
 
-function barChartData(){
-
-
 const xExtent = d3.extent(slicedData, d => d.date);
 const xScale = d3.scaleTime()
  .domain(xExtent)
- .range([0, width]);
-
-//  console.log(xScale(new Date("01/01/2017")))
-
-
-// const [min,max]= d3.extent(slicedData, d => d.high)
-
-// const yScale = d3.scaleLinear()
-//  .domain([Math.min(min,0) , max] )
-//  .range([height, 0])
+ .range([margin.left, width - margin.right]);
 
 
 
-
+ 
 //min: low temp , max: high temp
 
 const highMax = d3.max(slicedData, d => d.high );
 
-const lowMin = d3.min(slicedData, d => d.low)
+const lowMin = d3.min(slicedData, d => d.low);
 
 
 const yScale = d3.scaleLinear()
   .domain([lowMin , highMax])
-  .range([height, 0])
+  .range([height - margin.bottom , margin.top])
 
 
-//map avg temp to color
 
+  
 const colorExtent = d3.extent(slicedData, d => d.avg).reverse()
 
+//map avg temp to color
 const colorScale = d3.scaleSequential()
  .domain(colorExtent)
  .interpolator(d3.interpolateRdYlBu)
 
 
- console.log(colorScale(100))
-
-
-
- //create line generator
- const highLine = d3.line()
+  //create line generator
+  const highLine = d3.line()
   .x(d => xScale(d.date))
   .y(d => yScale(d.avg))
 
-//  const lowLine 
-//array 
+// creating axes
+
+  const yAxis = d3.axisLeft()
+      .scale(yScale)
+
+  const xAxis = d3.axisBottom()
+     .scale(xScale)
+
+
+
+
+function barChartData(){
+
 return slicedData.map(d =>{
     return {
         x: xScale(d.date),
@@ -88,9 +85,10 @@ return slicedData.map(d =>{
         path: highLine(slicedData)
     }
 })
-
-
 }
+
+
+
 
 
 
@@ -106,7 +104,7 @@ const svg = d3.select("svg")
     .attr('height', d => d.height)
     .attr("fill", d => d.fill)
    
-//   return svg.node()
+
 
 const lines = svg.selectAll('path')
 .data(barChartData).enter().append('path')
@@ -114,3 +112,12 @@ const lines = svg.selectAll('path')
 .attr('fill', 'none')
 .attr('stroke-width', 2)
 .attr('stroke', d => d.fill)
+
+
+ const drawXAxis = svg.append("g")
+      .attr("transform" , `translate(0, ${height - margin.bottom})`)
+     .call(xAxis)
+ const drawYaxis = svg.append("g")
+ .attr("transform" , `translate( ${margin.left}, 0)`)
+     .call(yAxis)
+   
