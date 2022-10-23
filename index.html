@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+  <link>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./src/index.css" rel="stylesheet" />
     <title>Ylytic</title>
   </head>
   <body>
     <div id="root"></div>
+    <div class="container">
+    <h1>High, Average and Low Temperatures</h1>
+    <img src="./assets/logo.png" />
+    </div>
+    <h2 style="background-color: lightblue">Note: Cool colors like blue are displaying low temperatures whereas warm colors like red are displaying high temperatures </h2>
     <svg class="bar-chart"></svg>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script type="module" src="./index.js"></script>
